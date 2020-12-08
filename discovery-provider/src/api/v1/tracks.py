@@ -223,7 +223,7 @@ class TrackSearchResult(Resource):
 # With this second cache, each user_id can reuse on the same cached list of tracks, and then populate them uniquely.
 
 TRENDING_LIMIT = 100
-TRENDING_TTL_SEC = 60 * 60 * 3
+TRENDING_TTL_SEC = 28 * 60 # 28 minutes
 
 def get_trending(args):
     """Get Trending, shared between full and regular endpoints."""
