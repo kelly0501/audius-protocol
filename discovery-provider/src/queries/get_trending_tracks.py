@@ -12,7 +12,7 @@ from src.utils.redis_cache import extract_key, use_redis_cache
 
 logger = logging.getLogger(__name__)
 
-SCORES_CACHE_DURATION_SEC = 10 * 60
+SCORES_CACHE_DURATION_SEC = 60 * 60 * 3
 
 N = 1
 a = max
