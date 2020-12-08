@@ -155,11 +155,15 @@ def update_network_peers(self):
         # Attempt to acquire lock - do not block if unable to acquire
         have_lock = update_lock.acquire(blocking=False)
         if have_lock:
+            # An object returned from web3 chain queries
+            peers_from_ethereum = retrieve_peers_from_eth_contracts(self)
+            logger.info(f"index_network_peers.py | Peers from eth-contracts: {peers_from_ethereum}")
             # An object returned from local database queries
             peers_from_local = retrieve_peers_from_db(self)
             logger.info(f"index_network_peers.py | Peers from db : {peers_from_local}")
             # Combine the set of known peers from ethereum and within local database
-            all_peers = peers_from_local
+            all_peers = peers_from_ethereum
+            all_peers.update(peers_from_local)
 
             # Legacy list of cnodes from identity
             identity_cnodes_map = refresh_cnodes_from_identity(self)
@@ -175,18 +179,6 @@ def update_network_peers(self):
             # Update creator node url list in IPFS Client
             # This list of known nodes is used to traverse and retrieve metadata from gateways
             ipfs_client.update_cnode_urls(peers_list)
-            
-            # Connect to all peers
-            connect_peers(self, peers_list)
-
-            # Add combine with eth contracts peers
-            # An object returned from web3 chain queries
-            peers_from_ethereum = retrieve_peers_from_eth_contracts(self)
-            logger.info(f"index_network_peers.py | Peers from eth-contracts: {peers_from_ethereum}")
-            all_peers.update(peers_from_ethereum)
-            peers_list = list(all_peers)
-            ipfs_client.update_cnode_urls(peers_list)
-
             # Connect to all peers
             connect_peers(self, peers_list)
         else:
